@@ -1,3 +1,6 @@
+# Local Codex workspace files
+.codex
+
 # Logs
 logs
 *.log

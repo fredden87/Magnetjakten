@@ -12,6 +12,8 @@ const winOverlay = document.querySelector("#winOverlay");
 const winTime = document.querySelector("#winTime");
 const replayButton = document.querySelector("#replayButton");
 
+const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+
 let stars = [];
 let collectedCount = 0;
 let magnetPosition = { x: 0, y: 0 };
@@ -20,6 +22,8 @@ let gameBounds = null;
 let startTime = 0;
 let lastMagnetMoveAt = 0;
 let isWon = false;
+let audioContext = null;
+let audioReady = false;
 
 function getGameBounds() {
   return game.getBoundingClientRect();
@@ -78,6 +82,49 @@ function markMagnetMoving() {
   lastMagnetMoveAt = Date.now();
 }
 
+async function ensureAudioContext() {
+  if (!AudioContextClass) {
+    return null;
+  }
+
+  if (!audioContext) {
+    audioContext = new AudioContextClass();
+  }
+
+  if (audioContext.state === "suspended") {
+    await audioContext.resume();
+  }
+
+  audioReady = audioContext.state === "running";
+  return audioContext;
+}
+
+function playCatchSound() {
+  if (!audioReady || !audioContext) {
+    return;
+  }
+
+  const context = audioContext;
+
+  const now = context.currentTime;
+  const oscillator = context.createOscillator();
+  const gain = context.createGain();
+
+  oscillator.type = "triangle";
+  oscillator.frequency.setValueAtTime(220, now);
+  oscillator.frequency.exponentialRampToValueAtTime(660, now + 0.05);
+  oscillator.frequency.exponentialRampToValueAtTime(330, now + 0.14);
+
+  gain.gain.setValueAtTime(0.0001, now);
+  gain.gain.exponentialRampToValueAtTime(0.12, now + 0.008);
+  gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.16);
+
+  oscillator.connect(gain);
+  gain.connect(context.destination);
+  oscillator.start(now);
+  oscillator.stop(now + 0.18);
+}
+
 function placeStar(star) {
   star.element.style.transform = `translate3d(${star.x}px, ${star.y}px, 0) translate3d(-50%, -50%, 0)`;
 }
@@ -117,6 +164,9 @@ function collectStar(star) {
   star.element.classList.add("collected");
   collectedCount += 1;
   updateScore();
+  void ensureAudioContext().then(() => {
+    playCatchSound();
+  });
 
   window.setTimeout(() => {
     star.element.remove();
@@ -197,10 +247,12 @@ function moveMagnetToEvent(event) {
 }
 
 function handlePointerDown(event) {
+  void ensureAudioContext();
   moveMagnetToEvent(event);
 }
 
 function handlePointerMove(event) {
+  void ensureAudioContext();
   moveMagnetToEvent(event);
   markMagnetMoving();
 }

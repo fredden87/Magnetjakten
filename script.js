@@ -126,6 +126,38 @@ function playCatchSound() {
   oscillator.stop(now + 0.18);
 }
 
+async function playWinSound() {
+  await ensureAudioContext();
+
+  if (!audioReady || !audioContext) {
+    return;
+  }
+
+  const context = audioContext;
+  const now = context.currentTime;
+  const notes = [523.25, 659.25, 783.99];
+
+  for (let index = 0; index < notes.length; index += 1) {
+    const oscillator = context.createOscillator();
+    const gain = context.createGain();
+    const noteStart = now + index * 0.08;
+    const noteStop = noteStart + 0.28;
+
+    oscillator.type = "sine";
+    oscillator.frequency.setValueAtTime(notes[index], noteStart);
+    oscillator.frequency.exponentialRampToValueAtTime(notes[index] * 1.5, noteStart + 0.08);
+
+    gain.gain.setValueAtTime(0.0001, noteStart);
+    gain.gain.exponentialRampToValueAtTime(0.14, noteStart + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.0001, noteStop);
+
+    oscillator.connect(gain);
+    gain.connect(context.destination);
+    oscillator.start(noteStart);
+    oscillator.stop(noteStop);
+  }
+}
+
 function placeStar(star) {
   star.element.style.transform = `translate3d(${star.x}px, ${star.y}px, 0) translate3d(-50%, -50%, 0)`;
 }
@@ -182,12 +214,13 @@ async function collectStar(star) {
   }
 
   if (collectedCount === winTargetStars) {
-    showWin();
+    await showWin();
   }
 }
 
-function showWin() {
+async function showWin() {
   isWon = true;
+  await playWinSound();
   winTime.textContent = formatWinTime(Date.now() - startTime);
   winOverlay.classList.remove("hidden");
 }

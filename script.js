@@ -1,7 +1,7 @@
 const totalStars = 10;
 const winTargetStars = totalStars * 2;
 const attractionRadius = 155;
-const collectDistance = 34;
+const collectDistance = 28;
 const starMargin = 62;
 
 const game = document.querySelector("#game");
@@ -103,7 +103,7 @@ function createStar(index) {
     y,
     target: pickStarTarget(),
     collected: false,
-    driftSpeed: randomBetween(1.2, 1.8),
+    driftSpeed: randomBetween(2.1, 2.9),
     pullOffset: index * 0.004
   };
 
@@ -142,7 +142,7 @@ function showWin() {
 }
 
 function moveStars() {
-  const magnetIsMoving = Date.now() - lastMagnetMoveAt < 160;
+  const magnetIsMoving = Date.now() - lastMagnetMoveAt < 110;
   const bounds = getStarBounds();
 
   for (const star of stars) {

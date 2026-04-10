@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="sv">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+    <title>Magnetjakten</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <main id="game" aria-label="Magnetjakten">
+      <header class="topbar">
+        <h1>Magnetjakten</h1>
+        <p id="score" class="score" aria-live="polite">Stjärnor: 0 / 20</p>
+      </header>
+
+      <p class="hint">Fånga stjärnorna!</p>
+
+      <div id="stars" aria-hidden="true"></div>
+      <div id="magnet" class="magnet" aria-label="Magnet">
+        <span class="magnet-shape" aria-hidden="true"></span>
+      </div>
+
+      <section id="winOverlay" class="win-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="winTitle">
+        <div class="win-box">
+          <h2 id="winTitle" aria-label="Pokal">🏆</h2>
+          <p id="winTime" class="win-time" aria-live="polite"></p>
+          <button id="replayButton" type="button">Spela igen</button>
+        </div>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>

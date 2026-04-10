@@ -7,24 +7,78 @@
     <link rel="stylesheet" href="style.css">
   </head>
   <body>
-    <main id="game" aria-label="Magnetjakten">
-      <header class="topbar">
-        <h1>Magnetjakten</h1>
-        <p id="score" class="score" aria-live="polite">Stjärnor: 0 / 20</p>
+    <main id="game" class="scene-meadow is-menu" aria-label="Magnetjakten">
+      <div class="sky-details" aria-hidden="true">
+        <span class="rainbow"></span>
+        <span class="cloud cloud-one"></span>
+        <span class="cloud cloud-two"></span>
+        <span class="cloud cloud-three"></span>
+      </div>
+
+      <header class="topbar" aria-label="Spelstatus">
+        <div>
+          <h1>Magnetjakten</h1>
+          <p id="levelName" class="level-name">Magnetängen</p>
+        </div>
+        <div class="status-panel">
+          <p id="score" class="score" aria-live="polite">Stjärnor: 0 / 0</p>
+          <button id="gameSoundButton" class="small-button" type="button" aria-pressed="false">Ljud på</button>
+        </div>
       </header>
 
-      <p class="hint">Fånga stjärnorna!</p>
+      <p id="hint" class="hint">Dra magneten och fånga stjärnorna.</p>
+
+      <div id="unicorn" class="unicorn" aria-label="Glad enhörning">
+        <div class="unicorn-head">
+          <span class="unicorn-horn" aria-hidden="true"></span>
+          <span class="unicorn-ear ear-left" aria-hidden="true"></span>
+          <span class="unicorn-ear ear-right" aria-hidden="true"></span>
+          <span class="unicorn-mane" aria-hidden="true"></span>
+          <span class="unicorn-eye eye-left" aria-hidden="true"></span>
+          <span class="unicorn-eye eye-right" aria-hidden="true"></span>
+          <span class="unicorn-cheek cheek-left" aria-hidden="true"></span>
+          <span class="unicorn-cheek cheek-right" aria-hidden="true"></span>
+          <span class="unicorn-smile" aria-hidden="true"></span>
+        </div>
+      </div>
 
       <div id="stars" aria-hidden="true"></div>
+      <div id="sparkles" aria-hidden="true"></div>
       <div id="magnet" class="magnet" aria-label="Magnet">
         <span class="magnet-shape" aria-hidden="true"></span>
       </div>
 
-      <section id="winOverlay" class="win-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="winTitle">
+      <section id="startScreen" class="overlay start-screen" aria-labelledby="startTitle">
+        <div class="menu-box">
+          <p class="kicker">Magiska stjärnor väntar</p>
+          <h2 id="startTitle">Magnetjakten</h2>
+          <p>Hjälp enhörningen att samla stjärnor i tre glittriga världar.</p>
+
+          <fieldset class="difficulty-picker">
+            <legend>Välj spel</legend>
+            <div class="difficulty-options">
+              <button class="difficulty-button active" type="button" data-difficulty="easy" aria-pressed="true">Lätt</button>
+              <button class="difficulty-button" type="button" data-difficulty="challenge" aria-pressed="false">Utmaning</button>
+            </div>
+          </fieldset>
+
+          <button id="soundButton" class="secondary-button" type="button" aria-pressed="false">Ljud på</button>
+          <button id="playButton" class="primary-button" type="button">Spela</button>
+        </div>
+      </section>
+
+      <div id="levelToast" class="level-toast hidden" aria-live="polite">Magnetängen</div>
+
+      <section id="winOverlay" class="overlay win-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="winTitle">
         <div class="win-box">
-          <h2 id="winTitle" aria-label="Pokal">🏆</h2>
+          <p class="kicker">Enhörningen jublar</p>
+          <h2 id="winTitle">Hurra!</h2>
+          <p id="winMessage">Alla stjärnor glittrar.</p>
           <p id="winTime" class="win-time" aria-live="polite"></p>
-          <button id="replayButton" type="button">Spela igen</button>
+          <div class="win-actions">
+            <button id="replayButton" class="primary-button" type="button">Spela igen</button>
+            <button id="menuButton" class="secondary-button" type="button">Startmeny</button>
+          </div>
         </div>
       </section>
     </main>

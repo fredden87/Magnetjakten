@@ -1,6 +1,7 @@
 const http = require("node:http");
 const fs = require("node:fs");
 const fsp = require("node:fs/promises");
+const os = require("node:os");
 const path = require("node:path");
 
 const root = __dirname;
@@ -16,6 +17,25 @@ const contentTypes = {
   ".jpeg": "image/jpeg",
   ".svg": "image/svg+xml"
 };
+
+function getNetworkUrls() {
+  const urls = [];
+  const interfaces = os.networkInterfaces();
+
+  for (const addresses of Object.values(interfaces)) {
+    if (!addresses) {
+      continue;
+    }
+
+    for (const address of addresses) {
+      if (address.family === "IPv4" && !address.internal) {
+        urls.push(`http://${address.address}:${port}/`);
+      }
+    }
+  }
+
+  return urls;
+}
 
 const server = http.createServer(async (req, res) => {
   try {
@@ -49,5 +69,12 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(port, host, () => {
-  console.log(`Magnetjakten körs på http://${host}:${port}/`);
+  const browserHost = host === "0.0.0.0" ? "localhost" : host;
+  const networkUrls = host === "0.0.0.0" ? getNetworkUrls() : [];
+
+  console.log(`Magnetjakten körs på http://${browserHost}:${port}/`);
+
+  for (const url of networkUrls) {
+    console.log(`På nätverket: ${url}`);
+  }
 });

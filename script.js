@@ -159,14 +159,13 @@ function createStar(index) {
   return star;
 }
 
-function collectStar(star) {
+async function collectStar(star) {
   star.collected = true;
   star.element.classList.add("collected");
   collectedCount += 1;
   updateScore();
-  void ensureAudioContext().then(() => {
-    playCatchSound();
-  });
+  await ensureAudioContext();
+  playCatchSound();
 
   window.setTimeout(() => {
     star.element.remove();
@@ -205,7 +204,7 @@ function moveStars() {
     const distance = Math.hypot(dx, dy);
 
     if (magnetIsMoving && distance < collectDistance) {
-      collectStar(star);
+      void collectStar(star);
       continue;
     }
 
@@ -246,13 +245,13 @@ function moveMagnetToEvent(event) {
   setMagnetPosition(event.clientX - gameBounds.left, event.clientY - gameBounds.top);
 }
 
-function handlePointerDown(event) {
-  void ensureAudioContext();
+async function handlePointerDown(event) {
+  await ensureAudioContext();
   moveMagnetToEvent(event);
 }
 
-function handlePointerMove(event) {
-  void ensureAudioContext();
+async function handlePointerMove(event) {
+  await ensureAudioContext();
   moveMagnetToEvent(event);
   markMagnetMoving();
 }

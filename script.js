@@ -21,6 +21,7 @@ let animationId = null;
 let gameBounds = null;
 let startTime = 0;
 let lastMagnetMoveAt = 0;
+let lastCollectAt = 0;
 let isWon = false;
 let audioContext = null;
 let audioReady = false;
@@ -163,6 +164,7 @@ async function collectStar(star) {
   star.collected = true;
   star.element.classList.add("collected");
   collectedCount += 1;
+  lastCollectAt = Date.now();
   updateScore();
   await ensureAudioContext();
   playCatchSound();
@@ -192,6 +194,7 @@ function showWin() {
 
 function moveStars() {
   const magnetIsMoving = Date.now() - lastMagnetMoveAt < 110;
+  const magnetIsUnmagnetic = Date.now() - lastCollectAt < 200;
   const bounds = getStarBounds();
 
   for (const star of stars) {
@@ -203,12 +206,12 @@ function moveStars() {
     const dy = magnetPosition.y - star.y;
     const distance = Math.hypot(dx, dy);
 
-    if (magnetIsMoving && distance < collectDistance) {
+    if (!magnetIsUnmagnetic && magnetIsMoving && distance < collectDistance) {
       void collectStar(star);
       continue;
     }
 
-    if (magnetIsMoving && distance < attractionRadius) {
+    if (!magnetIsUnmagnetic && magnetIsMoving && distance < attractionRadius) {
       const closeness = 1 - distance / attractionRadius;
       const pull = 0.025 + closeness * 0.09 + star.pullOffset;
       star.x += dx * pull;
@@ -267,6 +270,7 @@ function resetGame() {
   collectedCount = 0;
   startTime = Date.now();
   lastMagnetMoveAt = 0;
+  lastCollectAt = 0;
   isWon = false;
   winOverlay.classList.add("hidden");
   winTime.textContent = "";
